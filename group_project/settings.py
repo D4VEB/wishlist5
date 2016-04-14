@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'debug_toolbar',
-    #'bootstrap3',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',

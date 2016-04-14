@@ -56,9 +56,7 @@ class Pledge(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    # def refund(self):
-
     def __str__(self):
-        return "{}".format(self.pledge_amount)
+        return "{}".format(self.pledge_value)
 
 
