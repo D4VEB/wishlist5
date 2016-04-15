@@ -82,7 +82,7 @@ class DetailUpdateProfile(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateUser(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+
 
 
 
