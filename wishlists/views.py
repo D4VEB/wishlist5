@@ -14,7 +14,7 @@ import stripe
 class ListCreateList(generics.ListCreateAPIView):
     queryset = List.objects.order_by('-created_at')
     serializer_class = ListSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -23,12 +23,11 @@ class ListCreateList(generics.ListCreateAPIView):
 class DetailUpdateList(generics.RetrieveUpdateDestroyAPIView):
     queryset = List.objects.all()
     serializer_class = ListSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+
 
 class ListCreateItem(generics.ListCreateAPIView):
     queryset = Item.objects.order_by('-created_at')
     serializer_class = ItemSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -36,12 +35,10 @@ class ListCreateItem(generics.ListCreateAPIView):
 class DetailUpdateItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreatePledge(generics.ListCreateAPIView):
     queryset = Pledge.objects.order_by('-created_at')
     serializer_class = PledgeSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         stripe.api_key = os.environ('STRIPE_API_KEY')
@@ -68,12 +65,12 @@ class ListCreatePledge(generics.ListCreateAPIView):
 class DetailUpdatePledge(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+
 
 class ListCreateProfile(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
 class DetailUpdateProfile(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
@@ -84,11 +81,9 @@ class ListCreateUser(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 
-
-
 class MakePledge(generics.CreateAPIView):
     serializer_class = ChargeSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
     def pledge_transaction(request):
 
