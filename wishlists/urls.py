@@ -1,7 +1,8 @@
 from rest_framework.authtoken.views import obtain_auth_token
 from wishlists.views import APIDetailUpdateList, APIListCreateList, \
     APIDetailUpdateItem, APIListCreateItem, \
-    APIDetailUpdatePledge, APIListCreatePledge
+    APIDetailUpdatePledge, APIListCreatePledge, APIListCreateProfile, \
+    APIDetailUpdateProfile, APIListCreateUser
 from django.conf.urls import url
 
 
@@ -19,5 +20,11 @@ urlpatterns = [
         name='api_pledge_detail_update'),
     url(r'^pledges/$', APIListCreatePledge.as_view(),
         name='api_pledge_list_create'),
+    url(r'^profiles/$', APIListCreateProfile.as_view(),
+        name='api_profile_list_create'),
+    url(r'^profiles/(?P<pk>\d+)$', APIDetailUpdateProfile.as_view(),
+        name='api_profile_detail_update'),
+    url(r'^users/$', APIListCreateUser.as_view(),
+         name='api_profile_list_create'),
     url(r'^api-token-auth/', obtain_auth_token),
 ]

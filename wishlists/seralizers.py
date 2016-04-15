@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from wishlists.models import List, Item, Pledge
+from wishlists.models import List, Item, Pledge, Profile
+
 
 class ListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,8 +26,13 @@ class PledgeSerializer(serializers.ModelSerializer):
         fields = ('user', 'item', 'pledge_value', 'created_at', 'modified_at')
         read_only_fields = ('user', 'created_at', 'modified_at')
 
-class UserSeralizer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('user', 'id', 'email', 'shipping_address')
+        read_only_fields = ('user', 'id')
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('user', 'id')
-        read_only_fields = ('user', 'id')
+        fields = '__all__'
