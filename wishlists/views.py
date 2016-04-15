@@ -1,69 +1,112 @@
 import os
-
+from wishlists.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.conf import settings
 from django.contrib.auth.models import User
 from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import generics
 from rest_framework.serializers import ListSerializer
 from wishlists.seralizers import ListSerializer, ItemSerializer, \
-        PledgeSerializer, ProfileSerializer, UserSerializer
+        PledgeSerializer, ProfileSerializer, UserSerializer, ChargeSerializer
 import stripe
 
 
-class APIListCreateList(generics.ListCreateAPIView):
+class ListCreateList(generics.ListCreateAPIView):
     queryset = List.objects.order_by('-created_at')
     serializer_class = ListSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(user=user)
 
-class APIDetailUpdateList(generics.RetrieveUpdateDestroyAPIView):
+class DetailUpdateList(generics.RetrieveUpdateDestroyAPIView):
     queryset = List.objects.all()
     serializer_class = ListSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
-class APIListCreateItem(generics.ListCreateAPIView):
+class ListCreateItem(generics.ListCreateAPIView):
     queryset = Item.objects.order_by('-created_at')
     serializer_class = ItemSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save()
 
-class APIDetailUpdateItem(generics.RetrieveUpdateDestroyAPIView):
+class DetailUpdateItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
-class APIListCreatePledge(generics.ListCreateAPIView):
+class ListCreatePledge(generics.ListCreateAPIView):
     queryset = Pledge.objects.order_by('-created_at')
     serializer_class = PledgeSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         stripe.api_key = os.environ('STRIPE_API_KEY')
         token = serializer.initial_data['token']
 
+        token = self.request.POST["stripeToken"]
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+        amount = int(float(self.request.POST['amount']) * 100)
+
         try:
-            pledge = stripe.Charge.create(
-                amount=serializer.initial_data['pledge_value'],
+            charge = stripe.Charge.create(
+                amount=amount,  # amount in cents, again
                 currency="usd",
                 source=token,
-                description="Pledge"
+                description="Pledge submitted"
             )
-            pledge_id = pledge['id']
-        except stripe.error.CardError:
+        except stripe.error.CardError as e:
+            # need to add a response to error here...
             pass
-        serializer.save(pledge_id=pledge_id)
 
-class APIDetailUpdatePledge(generics.RetrieveUpdateDestroyAPIView):
+
+class DetailUpdatePledge(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
-class APIListCreateProfile(generics.ListCreateAPIView):
+class ListCreateProfile(generics.ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+class DetailUpdateProfile(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
-class APIDetailUpdateProfile(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-
-class APIListCreateUser(generics.ListCreateAPIView):
+class ListCreateUser(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+
+
+class MakePledge(generics.CreateAPIView):
+    serializer_class = ChargeSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def pledge_transaction(request):
+
+        # Set your secret key: remember to change this to your live secret key in production
+        # See your keys here https://dashboard.stripe.com/account/apikeys
+        stripe.api_key = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
+
+        # Get the credit card details submitted by the form
+        token = request.POST['stripeToken']
+
+        # Create the charge on Stripe's servers - this will charge the user's card
+        try:
+            charge = stripe.Charge.create(
+                amount=1000,  # amount in cents, again
+                currency="usd",
+                source=token,
+                description="Example charge"
+            )
+        except stripe.error.CardError as e:
+            # The card has been declined
+            pass

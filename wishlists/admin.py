@@ -1,4 +1,6 @@
 from django.contrib import admin
+from stripe import Charge
+
 from wishlists.models import List, Item, Pledge, Profile
 
 

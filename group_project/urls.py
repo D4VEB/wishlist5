@@ -15,13 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-
-from wishlists.views import APIListCreateList
+from wishlists.views import ListCreateList
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include('wishlists.urls')),
     url(r'^docs/', include('rest_framework_swagger.urls')),
+    url(r'^api/', include('wishlists.urls')),
     url('^', include('django.contrib.auth.urls')),
-    url(r'^$', APIListCreateList.as_view()),
+    url(r'^$', ListCreateList.as_view()),
 ]

@@ -1,6 +1,8 @@
+import stripe
 from django.contrib.auth.models import User
-from rest_framework import serializers
+from stripe import Charge
 from wishlists.models import List, Item, Pledge, Profile
+from rest_framework import serializers
 
 
 class ListSerializer(serializers.ModelSerializer):
@@ -36,3 +38,27 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
+# see this thread... http://stackoverflow.com/questions/28736916/django-rest-framework-and-stripe-best-practice
+
+class ChargeSerializer(serializers.Serializer):
+    class Meta:
+        model = Charge
+        fields = '__all__'
+
+    def create(self, validated_data):
+        charge = Charge.objects.create(**validated_data)
+
+        # Will raise an Excetpion and stop the creation:
+        response = stripe.Charge.create(
+            amount=charge.cost,
+            currency="usd",
+            source=validated_data["token"],
+            description="Charge"
+        )
+        return charge
