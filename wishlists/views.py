@@ -19,7 +19,7 @@ class DetailUser(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
 class ListCreateList(generics.ListCreateAPIView):
-    queryset = List.objects.order_by('-created_at')
+    queryset = List.objects.all()
     serializer_class = ListSerializer
     permission_classes = (IsOwnerOrReadOnly,)
 
@@ -37,8 +37,8 @@ class ListCreateItem(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def perform_create(self, serializer):
-        serializer.save(list=self.request.list)
+    # def perform_create(self, serializer):
+    #     serializer.save(list=self.request.list)
 
 class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
