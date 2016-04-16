@@ -33,7 +33,7 @@ class DetailUpdateDeleteList(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreateItem(generics.ListCreateAPIView):
-    queryset = Item.objects.order_by('-created_at')
+    queryset = Item.objects.all()
     serializer_class = ItemSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -54,25 +54,25 @@ class ListCreatePledge(generics.ListCreateAPIView):
         serializer.save(item=self.request.item)
         serializer.save(user=self.request.user)
 
-        stripe.api_key = os.environ('STRIPE_API_KEY')
-        token = serializer.initial_data['token']
-
-        token = self.request.POST["stripeToken"]
-
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-
-        amount = int(float(self.request.POST['amount']) * 100)
-
-        try:
-            charge = stripe.Charge.create(
-                amount=amount,  # amount in cents, again
-                currency="usd",
-                source=token,
-                description="Pledge submitted"
-            )
-        except stripe.error.CardError as e:
-            # need to add a response to error here...
-            pass
+        # stripe.api_key = os.environ('STRIPE_API_KEY')
+        # token = serializer.initial_data['token']
+        #
+        # token = self.request.POST["stripeToken"]
+        #
+        # stripe.api_key = settings.STRIPE_SECRET_KEY
+        #
+        # amount = int(float(self.request.POST['amount']) * 100)
+        #
+        # try:
+        #     charge = stripe.Charge.create(
+        #         amount=amount,  # amount in cents, again
+        #         currency="usd",
+        #         source=token,
+        #         description="Pledge submitted"
+        #     )
+        # except stripe.error.CardError as e:
+        #     # need to add a response to error here...
+        #     pass
 
 class DetailUpdateDeletePledge(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pledge.objects.all()

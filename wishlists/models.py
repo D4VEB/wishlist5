@@ -29,8 +29,8 @@ class List(models.Model):
         return "{}".format(self.title)
 
 class Item(models.Model):
-    list = models.ForeignKey(List, related_name='items')
-    image = models.ImageField(upload_to='item_images/', null=True, blank=True)
+    list = models.ForeignKey(List)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     price = models.FloatField()
@@ -56,8 +56,8 @@ class Item(models.Model):
         return outstanding_balance
 
 class Pledge(models.Model):
-    user = models.ForeignKey(User, related_name='pledges')
-    item = models.ForeignKey(Item, related_name='pledges')
+    user = models.ForeignKey(User)
+    item = models.ForeignKey(Item)
     pledge_value = models.FloatField()
     stripe_id = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
