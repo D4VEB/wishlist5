@@ -1,64 +1,68 @@
 import stripe
 from django.contrib.auth.models import User
-from stripe import Charge
 from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import serializers
 
-
-class ListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = List
-        user = serializers.ReadOnlyField(source='user.id')
-        fields = ('id', 'title', 'user', 'created_at', 'modified_at',
-                  'deadline', 'expired',)
-        read_only_fields = ('user', 'created_at', 'modified_at', 'expired',)
-
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = ('title', 'list', 'image','description', 'price',
-                  'created_at','modified_at')
-        read_only_fields = ('dollars_pledged', 'created_at', 'modified_at')
-
-
-class PledgeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Pledge
-        user = serializers.ReadOnlyField(source='user.id')
-        fields = ('user', 'item', 'pledge_value', 'created_at', 'modified_at')
-        read_only_fields = ('user', 'created_at', 'modified_at')
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('user', 'id', 'email', 'shipping_address')
-        read_only_fields = ('user', 'id')
-
 class UserSerializer(serializers.ModelSerializer):
+    lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    pledges = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    password = serializers.CharField(max_length=128, write_only=True)
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ("id", "username", "pledges", "lists", "password")
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
 
+class ListSerializer(serializers.ModelSerializer):
+    items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = List
+        user = serializers.ReadOnlyField(source='user.id')
+        fields = '__all__'
+        read_only_fields = ('expired')
+
+class ItemSerializer(serializers.ModelSerializer):
+    list = ListSerializer(read_only=True)
+    pledges = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Item
+        fields = '__all__'
+        read_only_fields = ('dollars_pledged')
+
+
+class PledgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pledge
+        user = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+        fields = '__all__'
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
 
 # see this thread... http://stackoverflow.com/questions/28736916/django-rest-framework-and-stripe-best-practice
 
-class ChargeSerializer(serializers.Serializer):
-    class Meta:
-        model = Charge
-        fields = '__all__'
-
-    def create(self, validated_data):
-        charge = Charge.objects.create(**validated_data)
-
-        # Will raise an Excetpion and stop the creation:
-        response = stripe.Charge.create(
-            amount=charge.cost,
-            currency="usd",
-            source=validated_data["token"],
-            description="Charge"
-        )
-        return charge
+# class ChargeSerializer(serializers.Serializer):
+#     class Meta:
+#         model = Charge
+#         fields = '__all__'
+#
+#     def create(self, validated_data):
+#         charge = Charge.objects.create(**validated_data)
+#
+#         # Will raise an Excetpion and stop the creation:
+#         response = stripe.Charge.create(
+#             amount=charge.cost,
+#             currency="usd",
+#             source=validated_data["token"],
+#             description="Charge"
+#         )
+#         return charge

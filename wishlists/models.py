@@ -25,7 +25,6 @@ class List(models.Model):
     def is_expired(self):
         return timezone.now().date()
 
-
     def __str__(self):
         return "{}".format(self.title)
 
@@ -33,7 +32,7 @@ class Item(models.Model):
     list = models.ForeignKey(List)
     image = models.ImageField(upload_to="item_images/", null=True, blank=True)
     title = models.CharField(max_length=255)
-    description = models.TextField(max_length=500)
+    description = models.TextField()
     price = models.FloatField()
     visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
