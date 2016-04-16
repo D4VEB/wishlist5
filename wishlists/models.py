@@ -15,7 +15,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class List(models.Model):
     title = models.CharField(max_length=255)
-    user = models.ForeignKey(User, related_name='lists')
+    user = models.ForeignKey(User)
     deadline = models.DateField()
     expired = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -21,7 +21,7 @@ class DetailUser(generics.RetrieveAPIView):
 class ListCreateList(generics.ListCreateAPIView):
     queryset = List.objects.all()
     serializer_class = ListSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    # permission_classes = (IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -46,7 +46,7 @@ class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreatePledge(generics.ListCreateAPIView):
-    queryset = Pledge.objects.order_by('-created_at')
+    queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
