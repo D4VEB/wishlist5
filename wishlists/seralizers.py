@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     profiles = serializers.PrimaryKeyRelatedField(read_only=True)
-    lists = serializers.PrimaryKeyRelatedField(many=True)
+    lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     pledges = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
