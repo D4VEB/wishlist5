@@ -24,6 +24,6 @@ urlpatterns = [
     url(r'^profiles/(?P<pk>\d+)$', DetailUpdateProfile.as_view(),
         name='api_profile_detail_update'),
     url(r'^users/$', ListCreateUser.as_view(),
-         name='api_profile_list_create'),
+         name='api_user_list_create'),
     url(r'^api-token-auth/', obtain_auth_token),
 ]
