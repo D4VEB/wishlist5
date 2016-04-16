@@ -1,7 +1,6 @@
 import os
 from wishlists.permissions import IsOwnerOrReadOnly
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
-    IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.conf import settings
 from django.contrib.auth.models import User
 from wishlists.models import List, Item, Pledge, Profile
