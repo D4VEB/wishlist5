@@ -43,7 +43,7 @@ class ListCreateItem(generics.ListCreateAPIView):
 class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    # permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreatePledge(generics.ListCreateAPIView):
     queryset = Pledge.objects.order_by('-created_at')

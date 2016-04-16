@@ -23,14 +23,14 @@ class List(models.Model):
 
     # TODO: Add a method for expired if Chris doesn't do it on the front end
     def is_expired(self):
-        return timezone.now().date()
+        return timezone.now().date() > self.deadline
 
     def __str__(self):
         return "{}".format(self.title)
 
 class Item(models.Model):
     list = models.ForeignKey(List, related_name='items')
-    image = models.ImageField(upload_to="item_images/", null=True, blank=True)
+    image = models.ImageField(upload_to='item_images/', null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     price = models.FloatField()
