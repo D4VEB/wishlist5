@@ -19,7 +19,6 @@ from wishlists.views import ListCreateList
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^api/', include('wishlists.urls')),
     url('^', include('django.contrib.auth.urls')),
     url(r'^$', ListCreateList.as_view()),

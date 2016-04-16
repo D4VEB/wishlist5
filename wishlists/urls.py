@@ -3,11 +3,14 @@ from wishlists.views import DetailUpdateDeleteList, ListCreateList, \
     DetailUpdateDeleteItem, ListCreateItem, \
     DetailUpdateDeletePledge, ListCreatePledge, ListCreateProfile, \
     DetailUpdateProfile, ListCreateUser
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 
 urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token),
+    url(r'^docs/', include('rest_framework_swagger.urls')),
+    url(r'^users/$', ListCreateUser.as_view(),
+        name='api_user_list_create'),
     url(r'^lists/(?P<pk>\d+)$', DetailUpdateDeleteList.as_view(),
         name='api_list_detail_update'),
     url(r'^lists/$', ListCreateList.as_view(),
@@ -24,7 +27,5 @@ urlpatterns = [
         name='api_profile_list_create'),
     url(r'^profiles/(?P<pk>\d+)$', DetailUpdateProfile.as_view(),
         name='api_profile_detail_update'),
-    url(r'^users/$', ListCreateUser.as_view(),
-         name='api_user_list_create'),
     url(r'^$', ListCreateList.as_view()),
 ]

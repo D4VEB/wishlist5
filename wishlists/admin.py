@@ -1,5 +1,5 @@
 from django.contrib import admin
-from wishlists.models import List, Item, Pledge, Profile
+from wishlists.models import List, Item, Pledge
 
 
 @admin.register(List)
