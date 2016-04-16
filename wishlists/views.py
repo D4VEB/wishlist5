@@ -35,7 +35,7 @@ class DetailUpdateDeleteList(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateItem(generics.ListCreateAPIView):
     queryset = Item.objects.order_by('-created_at')
     serializer_class = ItemSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(list=self.request.list)
