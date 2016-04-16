@@ -4,13 +4,14 @@ from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
-    profiles = serializers.PrimaryKeyRelatedField(read_only=True)
+    items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    pledges = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    profile = serializers.PrimaryKeyRelatedField(read_only=True)
+    password = serializers.CharField(max_length=128, write_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'profiles', 'lists', 'pledges')
+        fields = ('id', 'username', 'lists', 'items', 'profile', 'password')
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -38,7 +39,7 @@ class ItemSerializer(serializers.ModelSerializer):
 class PledgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pledge
-        user = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+        user = UserSerializer(read_only=True)
         fields = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):
