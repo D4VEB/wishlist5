@@ -30,15 +30,15 @@ class ListCreateList(generics.ListCreateAPIView):
 class DetailUpdateDeleteList(generics.RetrieveUpdateDestroyAPIView):
     queryset = List.objects.all()
     serializer_class = ListSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    # permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreateItem(generics.ListCreateAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(list=self.request.list)
+    def perform_create(self, serializer):
+        serializer.save(list=self.request.list)
 
 class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()

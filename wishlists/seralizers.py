@@ -4,8 +4,8 @@ from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
-    list_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    profile_set = serializers.PrimaryKeyRelatedField(read_only=True)
+    lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    profile = serializers.PrimaryKeyRelatedField(read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
 
     class Meta:
