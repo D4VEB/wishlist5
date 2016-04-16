@@ -7,8 +7,8 @@ from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import generics
 from rest_framework.serializers import ListSerializer
 from wishlists.seralizers import ListSerializer, ItemSerializer, \
-        PledgeSerializer, ProfileSerializer, UserSerializer #, #ChargeSerializer
-# import stripe
+        PledgeSerializer, ProfileSerializer, UserSerializer
+
 
 class ListCreateUser(generics.ListCreateAPIView):
     queryset = User.objects.all()

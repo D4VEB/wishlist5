@@ -37,9 +37,10 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class PledgeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Pledge
-        user = UserSerializer(read_only=True)
         fields = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):

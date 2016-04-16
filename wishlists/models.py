@@ -67,7 +67,7 @@ class Pledge(models.Model):
         return "{}".format(self.pledge_value)
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="profiles")
+    user = models.ForeignKey(User, related_name="profile")
     shipping_address = models.TextField()
     email = models.CharField(max_length = 255)
     created_at = models.DateTimeField(auto_now_add=True)
