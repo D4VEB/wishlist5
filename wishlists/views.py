@@ -75,7 +75,6 @@ class ListCreatePledge(generics.ListCreateAPIView):
             # need to add a response to error here...
             pass
 
-
 class DetailUpdateDeletePledge(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
@@ -84,7 +83,6 @@ class DetailUpdateDeletePledge(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateProfile(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-
 
 class DetailUpdateProfile(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
