@@ -32,7 +32,7 @@ class Item(models.Model):
     list = models.ForeignKey(List, related_name='items')
     image = models.ImageField(upload_to="item_images/", null=True, blank=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.CharField(max_length=255)
     price = models.FloatField()
     visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,11 +67,8 @@ class Pledge(models.Model):
         return "{}".format(self.pledge_value)
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="profile")
-    shipping_address = models.TextField()
-    email = models.CharField(max_length = 255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User, null=True,
+            blank=True, related_name='profile')
 
 
 

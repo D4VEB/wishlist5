@@ -7,11 +7,11 @@ class UserSerializer(serializers.ModelSerializer):
     items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     profile = serializers.PrimaryKeyRelatedField(read_only=True)
-    password = serializers.CharField(max_length=128, write_only=True)
+
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'lists', 'items', 'profile', 'password')
+        fields = ('id', 'username', 'lists', 'items', 'profile')
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -37,6 +37,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class PledgeSerializer(serializers.ModelSerializer):
+    item = ItemSerializer(read_only=True)
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -44,6 +45,8 @@ class PledgeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Profile
         fields = '__all__'

@@ -7,6 +7,7 @@ from django.conf.urls import url
 
 
 urlpatterns = [
+    url(r'^api-token-auth/', obtain_auth_token),
     url(r'^lists/(?P<pk>\d+)$', DetailUpdateDeleteList.as_view(),
         name='api_list_detail_update'),
     url(r'^lists/$', ListCreateList.as_view(),
@@ -25,5 +26,5 @@ urlpatterns = [
         name='api_profile_detail_update'),
     url(r'^users/$', ListCreateUser.as_view(),
          name='api_user_list_create'),
-    url(r'^api-token-auth/', obtain_auth_token),
+    url(r'^$', ListCreateList.as_view()),
 ]
