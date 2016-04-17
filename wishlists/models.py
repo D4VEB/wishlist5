@@ -21,9 +21,14 @@ class List(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    # TODO: Add a method for expired if Chris doesn't do it on the front end
     def is_expired(self):
+        '''
+        There is a command to purge non-funded items from expired
+        lists in management -> commands -> expired_lists.py. This
+        process is scheduled/automated through Heroku scheduler.
+        '''
         return timezone.now().date() > self.deadline
+
 
     def __str__(self):
         return "{}".format(self.title)
@@ -31,6 +36,8 @@ class List(models.Model):
 class Item(models.Model):
     list = models.ForeignKey(List, related_name='items')
     image = models.ImageField(upload_to='images/', null=True, blank=True)
+    image_url = models.URLField(null=True, blank = True)
+    item_url = models.URLField(null=True, blank = True)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     price = models.FloatField()
@@ -54,6 +61,11 @@ class Item(models.Model):
         total_pledges = self.pledge_set.all()
         outstanding_balance = self.price - total_pledges
         return outstanding_balance
+
+    @property
+    def funded_item(self):
+        return self.dollars_pledged >= self.price
+
 
 class Pledge(models.Model):
     user = models.ForeignKey(User, related_name='pledges')
