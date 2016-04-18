@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^profiles/(?P<pk>\d+)$', DetailUpdateProfile.as_view(),
         name='api_profile_detail_update'),
     url(r'^$', ListCreateList.as_view()),
+    url(r'^testpayment', ListCreatePledge.as_view(), name='test_payment'),
+
 ]

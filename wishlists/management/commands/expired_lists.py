@@ -2,7 +2,6 @@
 from wishlists.models import List
 from django.core.management import BaseCommand
 from django.utils import timezone
-from datetime import timedelta
 import stripe
 
 
