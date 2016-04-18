@@ -28,5 +28,5 @@ urlpatterns = [
     url(r'^profiles/(?P<pk>\d+)$', DetailUpdateProfile.as_view(),
         name='api_profile_detail_update'),
     url(r'^$', ListCreateList.as_view()),
-    url('r^charges/', CreateCharge.as_view(), name = 'create_charge'),
+    url(r'^charges/', CreateCharge.as_view(), name = 'create_charge'),
 ]
