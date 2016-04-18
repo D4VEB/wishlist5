@@ -1,4 +1,5 @@
 import stripe
+from django.conf import settings
 from django.contrib.auth.models import User
 from wishlists.models import List, Item, Pledge, Profile
 from rest_framework import serializers
@@ -33,7 +34,6 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
 
-
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
@@ -42,12 +42,58 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PledgeSerializer(serializers.ModelSerializer):
-    item = ItemSerializer(read_only=True)
     user = UserSerializer(read_only=True)
+    item = ItemSerializer(read_only=True)
 
     class Meta:
         model = Pledge
-        fields = '__all__'
+        fields = ('id', 'user', 'item', 'pledge_value', 'created_at',
+                  'modified_at')
+
+class ChargeSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=100)
+    item_id = serializers.IntegerField()
+    pledge_value = serializers.IntegerField()
+
+    def create(self, validated_data):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        item = Item.objects.get(validated_data['list_id'])
+        token = validated_data['stripeToken']
+        pledge_value = validated_data['pledge_value']
+        user = validated_data['user']
+        item = validated_data['item_id']
+        charge_id = "1234"
+
+        try:
+            charge = stripe.Charge.create(
+                amount=pledge_value*100,
+                # multiply by 100 because the amount is in cents
+                currency="usd",
+                source=token,
+                description="Pledge submitted"
+                )
+
+        except stripe.error.CardError as e:
+            # The card has been declined
+            pass
+
+        pledge = Pledge.objects.create(user = user,
+                                       item_id=item,
+                                       pledge_value=pledge_value,
+                                       charge_id=charge_id)
+        return pledge
+
+
+
+
+
+# class PledgeSerializer(serializers.ModelSerializer):
+#     item = ItemSerializer(read_only=True)
+#     user = UserSerializer(read_only=True)
+#
+#     class Meta:
+#         model = Pledge
+#         fields = '__all__'
 
     #def create(self, validated_data):
         # '''
@@ -76,7 +122,3 @@ class PledgeSerializer(serializers.ModelSerializer):
         # except stripe.error.CardError as e:
         #     # need to add a response to error here...
         #     pass
-
-
-
-

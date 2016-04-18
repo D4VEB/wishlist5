@@ -9,7 +9,7 @@ class ListAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'list','image','title','description','price',
+    list_display = ('id', 'list','image_url','title','description','price',
                     'created_at', 'modified_at')
 
 @admin.register(Pledge)
