@@ -1,9 +1,9 @@
+from django.conf import settings
 
 from wishlists.models import List
 from django.core.management import BaseCommand
 from django.utils import timezone
 import stripe
-
 
 def refund_pledge(item):
     '''
@@ -11,12 +11,13 @@ def refund_pledge(item):
      https://stripe.com/docs/api#refunds
     '''
 
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
     for pledge in item.pledges:
         re = stripe.Refund.create(charge=pledge.charge_id)
 
 class Command(BaseCommand):
     '''
-
     Expired lists are the lists whose deadline has passed. To prevent
     embezzlement, all pledges for items that have not been fully funded
     prior to the list's deadline will be refunded to the donor.
@@ -36,4 +37,3 @@ class Command(BaseCommand):
             for item in expired_list.items:
                 if not item.funded_item:
                     refund_pledge(item)
-

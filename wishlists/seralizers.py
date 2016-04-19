@@ -27,7 +27,6 @@ class ListSerializer(serializers.ModelSerializer):
         read_only_fields = ('expired')
 
 class ItemSerializer(serializers.ModelSerializer):
-    list = ListSerializer(read_only=True)
     pledges = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
@@ -57,31 +56,32 @@ class ChargeSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
-        item = Item.objects.get(validated_data['list_id'])
-        token = validated_data['stripeToken']
         pledge_value = validated_data['pledge_value']
         user = validated_data['user']
-        item = validated_data['item_id']
-        charge_id = "1234"
+        #item = validated_data['item_id']
+        item = Item.objects.get(validated_data['item_id'])
+        token = validated_data['token']
 
         try:
             charge = stripe.Charge.create(
                 amount=pledge_value*100,
                 # multiply by 100 because the amount is in cents
                 currency="usd",
-                source=token,
+                source= token,
                 description="Pledge submitted"
                 )
+            pledge = Pledge.objects.create(user=user,
+                                           item=item['id'],
+                                           pledge_value=pledge_value,
+                                           stripe_id=charge['id']
+                                           )
+            return pledge
 
         except stripe.error.CardError as e:
             # The card has been declined
             pass
 
-        pledge = Pledge.objects.create(user = user,
-                                       item_id=item,
-                                       pledge_value=pledge_value,
-                                       charge_id=charge_id)
-        return pledge
+
 
 
 
