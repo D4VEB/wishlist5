@@ -47,10 +47,11 @@ class DetailUpdateDeleteList(generics.RetrieveUpdateDestroyAPIView):
 class ListCreateItem(generics.ListCreateAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(list=self.request.list)
+        list_id = self.request.data['list']
+        serializer.save(list=List.objects.get(pk=list_id))
 
 class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
@@ -60,7 +61,7 @@ class DetailUpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
 class ListPledge(generics.ListAPIView):
     queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -68,7 +69,7 @@ class ListPledge(generics.ListAPIView):
 class DetailPledge(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pledge.objects.all()
     serializer_class = PledgeSerializer
-    # permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsOwnerOrReadOnly,)
 
 class ListCreateProfile(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
